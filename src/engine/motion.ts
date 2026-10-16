@@ -77,7 +77,14 @@ export function initMotion({ signal, ctx, stage, ready }: MotionEnv): () => void
   const listen = <K extends keyof WindowEventMap>(type: K, fn: (e: WindowEventMap[K]) => void, opts: AddEventListenerOptions = {}) =>
     addEventListener(type, fn, { ...opts, signal });
 
-  const lenis = new Lenis({ lerp: .11, smoothWheel: true });
+  const touch = matchMedia('(hover: none), (pointer: coarse)').matches;
+  const lenis = new Lenis({
+    lerp: .11,
+    smoothWheel: true,
+    syncTouch: touch,
+    syncTouchLerp: .09,
+    touchInertiaMultiplier: 28
+  });
   lenis.on('scroll', ScrollTrigger.update);
   const lenisTick = (time: number) => lenis.raf(time * 1000);
   gsap.ticker.add(lenisTick);
@@ -206,7 +213,7 @@ export function initMotion({ signal, ctx, stage, ready }: MotionEnv): () => void
     heroTl = gsap.timeline({
       scrollTrigger: {
         trigger: tapeSection, start: 'top top', end: () => '+=' + Math.round(innerHeight * (isMobile() ? 1.5 : 2.2)),
-        pin: true, scrub: true, invalidateOnRefresh: true,
+        pin: true, scrub: true, anticipatePin: 1, invalidateOnRefresh: true,
         onUpdate: self => { S.hero = Math.max(0, 1 - self.progress / .14); }
       }
     });
@@ -230,7 +237,7 @@ export function initMotion({ signal, ctx, stage, ready }: MotionEnv): () => void
     rTl = gsap.timeline({
       scrollTrigger: {
         trigger: '#records', start: 'top top', end: () => '+=' + Math.round(innerHeight * (isMobile() ? 1.6 : 2.4)),
-        pin: true, scrub: true, invalidateOnRefresh: true,
+        pin: true, scrub: true, anticipatePin: 1, invalidateOnRefresh: true,
         onUpdate: self => { if (self.progress < .72 && deck.cur !== null) selectSingle(null); },
         onLeave: () => selectSingle(null),
         onLeaveBack: () => selectSingle(null)
@@ -250,7 +257,7 @@ export function initMotion({ signal, ctx, stage, ready }: MotionEnv): () => void
     gTl = gsap.timeline({
       scrollTrigger: {
         trigger: '#gear', start: 'top top', end: () => '+=' + Math.round(innerHeight * (isMobile() ? 1 : 1.4)),
-        pin: true, scrub: true, invalidateOnRefresh: true,
+        pin: true, scrub: true, anticipatePin: 1, invalidateOnRefresh: true,
         onUpdate: self => {
           if (self.progress > .7) typing.play();
           else if (self.progress < .55) typing.reverse();

@@ -38,7 +38,7 @@ function drawArt(signal: AbortSignal) {
 }
 
 function bindControls(signal: AbortSignal) {
-  (['pointerdown', 'keydown', 'touchend'] as const).forEach(type =>
+  (['pointerdown', 'pointerup', 'touchend', 'click', 'keydown'] as const).forEach(type =>
     addEventListener(type, unlock, { capture: true, passive: true, signal }));
   document.addEventListener('visibilitychange', suspendWhileHidden, { signal });
   $('#soundToggle').addEventListener('click', toggleSound, { signal });

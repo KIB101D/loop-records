@@ -44,7 +44,7 @@ export function TapesSection() {
           </ul>
           <p className="tape-hint" id="tapeHint" hidden>
             <span className="th-dot" aria-hidden="true" />
-            Click anywhere to play the tape
+            <span className="on-pointer">Click</span><span className="on-touch">Tap</span> anywhere to play the tape
           </p>
         </div>
       </div>

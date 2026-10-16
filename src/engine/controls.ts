@@ -4,6 +4,8 @@ import { audio, setPick } from './audio/engine';
 import { $, $$ } from './dom';
 import { T3, deck } from './state';
 
+const touch = () => matchMedia('(hover: none), (pointer: coarse)').matches;
+
 export function renderUi() {
   const sound = $<HTMLButtonElement>('#soundToggle');
   if (!sound) return;
@@ -18,7 +20,7 @@ export function renderUi() {
     $('i', b).textContent = playing ? 'Spinning · tap to stop' : PICKS[i].meta;
   });
   $('#npTitle').textContent = audio.pick ? TRACKS[audio.pick].title : 'LOOP Theme';
-  $('#npState').textContent = !audio.unlocked ? 'Click anywhere for sound'
+  $('#npState').textContent = !audio.unlocked ? `${touch() ? 'Tap' : 'Click'} anywhere for sound`
     : !audio.wanted ? 'Sound is off'
       : audio.pick ? 'On vinyl · 45 RPM'
         : audio.zone ? 'On tape · side A'

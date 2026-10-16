@@ -14,7 +14,12 @@
 *,*::before,*::after{box-sizing:border-box}
 body{margin:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);font-size:17px;line-height:1.55;overflow-x:hidden;overflow-x:clip;-webkit-font-smoothing:antialiased}
 html.lenis,html.lenis body{height:auto}
+html{overscroll-behavior-y:none}
 .lenis.lenis-smooth{scroll-behavior:auto!important}
+.lenis.lenis-smooth [data-lenis-prevent]{overscroll-behavior:contain}
+.lenis.lenis-stopped{overflow:hidden}
+.on-touch{display:none}
+@media (hover:none),(pointer:coarse){.on-touch{display:inline}.on-pointer{display:none}}
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 a{color:inherit}
 button{font:inherit;color:inherit}

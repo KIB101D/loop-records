@@ -44,7 +44,8 @@ export function createStage({ signal, onSelect }: StageOptions): Stage | null {
   } catch {
     return null;
   }
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.6));
+  const touch = matchMedia('(hover: none), (pointer: coarse)').matches;
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, touch ? 1.25 : 1.6));
   let vw = innerWidth, vh = innerHeight;
   renderer.setSize(vw, vh, false);
   renderer.outputEncoding = THREE.sRGBEncoding;
@@ -73,7 +74,7 @@ export function createStage({ signal, onSelect }: StageOptions): Stage | null {
   (() => {
     const { scene: sc, light: sun } = scene([-6, 8, -8], 1.25);
     sun.castShadow = true;
-    sun.shadow.mapSize.set(2048, 2048);
+    sun.shadow.mapSize.set(touch ? 1024 : 2048, touch ? 1024 : 2048);
     Object.assign(sun.shadow.camera, { left: -18, right: 18, top: 18, bottom: -18, near: 1, far: 70 });
     sun.shadow.camera.updateProjectionMatrix();
     sun.shadow.bias = -.0004;

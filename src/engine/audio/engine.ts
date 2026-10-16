@@ -15,6 +15,39 @@ type WebkitWindow = Window & {
   webkitOfflineAudioContext?: typeof OfflineAudioContext;
 };
 
+type SessionNavigator = Navigator & { audioSession?: { type: string } };
+
+let silentLoop: HTMLAudioElement | null = null;
+
+function silentWavUrl() {
+  const rate = 8000, samples = 800, buf = new ArrayBuffer(44 + samples * 2), v = new DataView(buf);
+  const text = (o: number, s: string) => [...s].forEach((ch, i) => v.setUint8(o + i, ch.charCodeAt(0)));
+  text(0, 'RIFF'); v.setUint32(4, 36 + samples * 2, true); text(8, 'WAVE');
+  text(12, 'fmt '); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, rate, true); v.setUint32(28, rate * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+  text(36, 'data'); v.setUint32(40, samples * 2, true);
+  return URL.createObjectURL(new Blob([buf], { type: 'audio/wav' }));
+}
+
+function preferPlaybackSession() {
+  const nav = navigator as SessionNavigator;
+  const useSession = () => {
+    try {
+      nav.audioSession!.type = 'playback';
+      return true;
+    } catch {
+      return false;
+    }
+  };
+  if (nav.audioSession && useSession()) return;
+  if (silentLoop || !/iP(hone|ad|od)/.test(navigator.userAgent)) return;
+  silentLoop = new Audio(silentWavUrl());
+  silentLoop.loop = true;
+  silentLoop.setAttribute('playsinline', '');
+  silentLoop.volume = .01;
+  void silentLoop.play().catch(() => {});
+}
+
 export const audio = {
   ctx: null as AudioContext | null,
   master: null as GainNode | null,
@@ -47,7 +80,6 @@ export function ensureCtx() {
     analyser.connect(ctx.destination);
     Object.assign(audio, { ctx, master, analyser, data: new Uint8Array(analyser.frequencyBinCount) });
   }
-  if (audio.ctx!.state === 'suspended') void audio.ctx!.resume();
   return audio.ctx;
 }
 
@@ -310,13 +342,26 @@ export async function sync() {
   notify();
 }
 
-export function unlock() {
-  if (audio.unlocked || !ensureCtx()) return;
+function markUnlocked() {
+  if (audio.unlocked) return;
   audio.unlocked = true;
   audio.unlockAt = performance.now();
   void getBuffer('ost');
   void sync();
   notify();
+}
+
+export function unlock() {
+  const ctx = ensureCtx();
+  if (!ctx) return;
+  preferPlaybackSession();
+  if (ctx.state === 'running') {
+    markUnlocked();
+    return;
+  }
+  ctx.resume().then(() => {
+    if (ctx.state === 'running') markUnlocked();
+  }).catch(() => {});
 }
 
 export function toggleSound() {
@@ -400,8 +445,13 @@ export function eqTick(bars: HTMLElement[]) {
 
 export function suspendWhileHidden() {
   if (!audio.ctx) return;
-  if (document.hidden) void audio.ctx.suspend();
-  else if (audio.unlocked) void audio.ctx.resume();
+  if (document.hidden) {
+    void audio.ctx.suspend();
+    silentLoop?.pause();
+  } else if (audio.unlocked) {
+    void audio.ctx.resume().catch(() => {});
+    void silentLoop?.play().catch(() => {});
+  }
 }
 
 export function disposeAudio() {
@@ -412,4 +462,9 @@ export function disposeAudio() {
     zone: false, pick: null, cur: null, building: {}, offsets: {}
   });
   if (ctx) void ctx.close();
+  if (silentLoop) {
+    silentLoop.pause();
+    URL.revokeObjectURL(silentLoop.src);
+    silentLoop = null;
+  }
 }
