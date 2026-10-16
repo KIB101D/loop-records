@@ -1,0 +1,20 @@
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  base: './',
+  plugins: [react()],
+  build: {
+    target: 'es2020',
+    chunkSizeWarningLimit: 900,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          three: ['three'],
+          motion: ['gsap', 'lenis'],
+          react: ['react', 'react-dom']
+        }
+      }
+    }
+  }
+});
