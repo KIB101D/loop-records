@@ -38,3 +38,9 @@ src/
 ```
 
 Shop address, hours and social links live in `src/data/content.ts`.
+
+## Credits
+
+The LOOP logo, with its film-strip **L**, cassette **OO** and vinyl **P**, comes from an original hand drawing by **Emiliia Merzliakova**. The whole site is built around that sketch. Special thanks to her for the artwork.
+
+The original drawing belongs to its author and is not covered by the code license.

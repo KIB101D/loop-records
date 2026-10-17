@@ -139,6 +139,8 @@ footer {
   position: fixed;
   left: 0;
   top: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 5;
   pointer-events: none;
   display: block;
@@ -790,6 +792,24 @@ footer {
   align-items: start;
   border-top: 2px solid var(--ink);
   padding-top: clamp(28px, 4vh, 44px);
+}
+.v-credit {
+  margin-top: 30px;
+  padding-top: 18px;
+  border-top: 1.5px dashed var(--rule);
+}
+.credit-name {
+  margin: 0;
+  font-family: var(--f-hand);
+  font-size: 27px;
+  line-height: 1.05;
+  color: var(--ink);
+}
+.credit-note {
+  margin: 6px 0 0;
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--ink-2);
 }
 .visit-grid > * {
   min-width: 0;

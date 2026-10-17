@@ -2,6 +2,9 @@
   "name": "loop-site",
   "private": true,
   "version": "1.0.0",
+  "contributors": [
+    "Emiliia Merzliakova (original LOOP logo artwork)"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",

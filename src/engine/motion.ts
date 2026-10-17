@@ -800,7 +800,8 @@ export function initMotion({
   const heroST = heroTl.scrollTrigger!;
   const maxY = () => document.documentElement.scrollHeight - innerHeight;
   type Route =
-    { tl: gsap.core.Timeline; p: number; dur: number } | { y: () => number };
+    | { tl: gsap.core.Timeline; p: number; dur: number }
+    | { y: () => number };
   const routes: Record<string, Route> = {
     "#top": { y: () => 0 },
     "#tapes": { tl: heroTl, p: 0.75, dur: 3.4 },

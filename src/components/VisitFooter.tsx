@@ -1,15 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-import { SHOP } from '../data/content';
+import { useEffect, useRef, useState } from "react";
+import { SHOP } from "../data/content";
 
 function CopyAddress({ target }: { target: React.RefObject<HTMLElement> }) {
-  const [label, setLabel] = useState('Copy address');
+  const [label, setLabel] = useState("Copy address");
   const timer = useRef<number>();
   useEffect(() => () => window.clearTimeout(timer.current), []);
 
   const flash = (text: string) => {
     setLabel(text);
     window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => setLabel('Copy address'), 1800);
+    timer.current = window.setTimeout(() => setLabel("Copy address"), 1800);
   };
   const selectText = () => {
     const el = target.current;
@@ -23,14 +23,18 @@ function CopyAddress({ target }: { target: React.RefObject<HTMLElement> }) {
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(`${SHOP.street}, ${SHOP.city}`);
-      flash('Copied');
+      flash("Copied");
     } catch {
       selectText();
-      flash('Select and copy above');
+      flash("Select and copy above");
     }
   };
 
-  return <button className="copy-addr" type="button" onClick={copy}>{label}</button>;
+  return (
+    <button className="copy-addr" type="button" onClick={copy}>
+      {label}
+    </button>
+  );
 }
 
 export function VisitFooter() {
@@ -46,22 +50,33 @@ export function VisitFooter() {
         </div>
         <div className="visit-grid fade">
           <div className="v-cta">
-            <p className="eyebrow"><span className="trk">B2</span> Visit</p>
+            <p className="eyebrow">
+              <span className="trk">B2</span> Visit
+            </p>
             <h2 className="h2">Come dig the crates</h2>
-            <a className="btn" href={SHOP.mapUrl} target="_blank" rel="noopener noreferrer">
+            <a
+              className="btn"
+              href={SHOP.mapUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               Visit the shop <span aria-hidden="true">▶</span>
             </a>
           </div>
           <div>
             <h3 className="v-h">Address</h3>
-            <address ref={address}>{SHOP.street}<br />{SHOP.city}</address>
+            <address ref={address}>
+              {SHOP.street}
+              <br />
+              {SHOP.city}
+            </address>
             <CopyAddress target={address} />
           </div>
           <div>
             <h3 className="v-h">Opening hours</h3>
             <dl className="hours">
               {SHOP.hours.map(([day, time]) => (
-                <div key={day} style={{ display: 'contents' }}>
+                <div key={day} style={{ display: "contents" }}>
                   <dt>{day}</dt>
                   <dd>{time}</dd>
                 </div>
@@ -72,9 +87,18 @@ export function VisitFooter() {
             <h3 className="v-h">Follow</h3>
             <ul className="social">
               {SHOP.social.map(([name, url]) => (
-                <li key={name}><a href={url} target="_blank" rel="noopener noreferrer">{name}</a></li>
+                <li key={name}>
+                  <a href={url} target="_blank" rel="noopener noreferrer">
+                    {name}
+                  </a>
+                </li>
               ))}
             </ul>
+            <div className="v-credit">
+              <h3 className="v-h">Special thanks</h3>
+              <p className="credit-name">Emiliia Merzliakova</p>
+              <p className="credit-note">for the hand-drawn LOOP logo</p>
+            </div>
           </div>
         </div>
         <div className="colophon">
