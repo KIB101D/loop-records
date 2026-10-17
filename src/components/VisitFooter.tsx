@@ -3,14 +3,18 @@ import { SHOP } from "../data/content";
 
 function CopyAddress({ target }: { target: React.RefObject<HTMLElement> }) {
   const [label, setLabel] = useState("Copy address");
-  const timer = useRef<number>();
-  useEffect(() => () => window.clearTimeout(timer.current), []);
+  const timer = useRef<number | undefined>(undefined);
+
+  useEffect(() => {
+    return () => window.clearTimeout(timer.current);
+  }, []);
 
   const flash = (text: string) => {
     setLabel(text);
     window.clearTimeout(timer.current);
     timer.current = window.setTimeout(() => setLabel("Copy address"), 1800);
   };
+
   const selectText = () => {
     const el = target.current;
     const selection = getSelection();
@@ -20,6 +24,7 @@ function CopyAddress({ target }: { target: React.RefObject<HTMLElement> }) {
     selection.removeAllRanges();
     selection.addRange(range);
   };
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(`${SHOP.street}, ${SHOP.city}`);
@@ -63,7 +68,7 @@ export function VisitFooter() {
               Visit the shop <span aria-hidden="true">▶</span>
             </a>
           </div>
-          <div>
+          <div className="v-addr">
             <h3 className="v-h">Address</h3>
             <address ref={address}>
               {SHOP.street}
@@ -72,7 +77,7 @@ export function VisitFooter() {
             </address>
             <CopyAddress target={address} />
           </div>
-          <div>
+          <div className="v-hours">
             <h3 className="v-h">Opening hours</h3>
             <dl className="hours">
               {SHOP.hours.map(([day, time]) => (
@@ -83,7 +88,7 @@ export function VisitFooter() {
               ))}
             </dl>
           </div>
-          <div>
+          <div className="v-follow">
             <h3 className="v-h">Follow</h3>
             <ul className="social">
               {SHOP.social.map(([name, url]) => (
@@ -94,11 +99,10 @@ export function VisitFooter() {
                 </li>
               ))}
             </ul>
-            <div className="v-credit">
-              <h3 className="v-h">Special thanks</h3>
-              <p className="credit-name">Emiliia Merzliakova</p>
-              <p className="credit-note">for the hand-drawn LOOP logo</p>
-            </div>
+          </div>
+          <div className="v-credit">
+            <h3 className="v-h">Special thanks</h3>
+            <p className="credit-name">Emiliia Merzliakova</p>
           </div>
         </div>
         <div className="colophon">
